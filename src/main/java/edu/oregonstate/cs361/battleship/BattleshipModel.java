@@ -16,8 +16,8 @@ public class BattleshipModel {
     private Civilian clipper = new Civilian("Clipper", 3, new Coordinate(0, 0), new Coordinate(0, 0));
     private Civilian dinghy = new Civilian("Dinghy", 1, new Coordinate(0,0), new Coordinate(0, 0));
 
-    private Ship computer_aircraftCarrier = new Ship("Computer_AircraftCarrier",5, new Coordinate(2,2),new Coordinate(2,7));
-    private StealthShip computer_battleship = new StealthShip("Computer_Battleship",4, new Coordinate(2,8),new Coordinate(6,8));
+    private Ship computer_aircraftCarrier = new Ship("Computer_AircraftCarrier",5, new Coordinate(2,2),new Coordinate(2,6));
+    private StealthShip computer_battleship = new StealthShip("Computer_Battleship",4, new Coordinate(2,8),new Coordinate(5,8));
     //private Ship computer_cruiser = new Ship("Computer_Cruiser",3, new Coordinate(4,1),new Coordinate(4,4));
     //private Ship computer_destroyer = new Ship("Computer_Destroyer",2, new Coordinate(7,3),new Coordinate(7,5));
     private StealthShip computer_submarine = new StealthShip("Computer_Submarine",3, new Coordinate(9,6),new Coordinate(9,8));
@@ -30,8 +30,13 @@ public class BattleshipModel {
     public ArrayList<Coordinate> computerMisses;
 
     public String results;
-    public int playerHitpoints;
-    public int computerHitpoints;
+    public String error_message;
+    //playerHitpoints to count how many hits player has taken, when it equals to 14, computer wins
+    //computerHitpoints to count how many hits AI has taken, when it equals to 14, player wins
+    public int playerHitpoints = 0;
+    public int computerHitpoints = 0;
+    public String AI_win = "You lose...T_T";
+    public String Player_win = "You WIN!!! ^_^";
 
 
     public BattleshipModel() {
@@ -98,14 +103,19 @@ public class BattleshipModel {
         Coordinate coor = new Coordinate(row,col);
         if(computer_aircraftCarrier.covers(coor)){
             computerHits.add(coor);
+            computerHitpoints += 1;
         }else if (computer_battleship.covers(coor)){
             computerHits.add(coor);
+            computerHitpoints += 1;
         }else if (computer_clipper.covers(coor)){
             computerHits.add(coor);
+            computerHitpoints += 1;
         }else if (computer_dinghy.covers(coor)){
             computerHits.add(coor);
+            computerHitpoints += 1;
         }else if (computer_submarine.covers(coor)){
             computerHits.add(coor);
+            computerHitpoints += 1;
         } else {
             computerMisses.add(coor);
         }
@@ -128,17 +138,52 @@ public class BattleshipModel {
 
         if(aircraftCarrier.covers(coor)){
             playerHits.add(coor);
+            playerHitpoints += 1;
         }else if (battleship.covers(coor)){
             playerHits.add(coor);
+            playerHitpoints += 1;
         }else if (clipper.covers(coor)){
             playerHits.add(coor);
+            playerHitpoints += 1;
         }else if (dinghy.covers(coor)){
             playerHits.add(coor);
+            playerHitpoints += 1;
         }else if (submarine.covers(coor)){
             playerHits.add(coor);
+            playerHitpoints += 1;
         } else {
             playerMisses.add(coor);
         }
+    }
+
+    public boolean checkfirepoint(int row, int col){
+        int hitsize = computerHits.size();
+        int missize = computerMisses.size();
+
+        int i = 0;
+        while( i < hitsize) {
+            Coordinate z = computerHits.get(i);
+            int xhit = z.Across;
+            int yhit = z.Down;
+            if (row == xhit && col == yhit){
+                return true;
+            }else{
+                i += 1;
+            }
+        }
+
+        int j = 0;
+        while( j < missize){
+            Coordinate m = computerMisses.get(j);
+            int xmiss = m.Across;
+            int ymiss = m.Down;
+            if(row == xmiss && col == ymiss){
+                return true;
+            }else{
+                j += 1;
+            }
+        }
+        return false;
     }
 
     public boolean scanPlayer(int row, int col ) {
